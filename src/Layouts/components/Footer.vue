@@ -17,7 +17,7 @@
       <p
         class="ml-4 text-orange font-weight-bold bg-orange-lighten-5 border rounded-xl px-3 py-0"
       >
-        V 2.0.6
+        V 2.0.7
       </p>
     </span>
   </div>
