@@ -1,0 +1,75 @@
+/* src/assets/main.css */
+@font-face {
+  font-family: "fontOsSiemreap";
+  src: url("/fonts/KHMEROSSIEMREAP.TTF") format("truetype");
+}
+
+@font-face {
+  font-family: "KhmerOsMoul";
+  src: url("/fonts/KHMEROSMOUL.TTF") format("truetype");
+}
+@font-face {
+  font-family: "fontAnkor";
+  src: url("fonts/ANGKOR.TTF") format("truetype");
+}
+
+.siemreap {
+  font-family: "fontOsSiemreap", sans-serif;
+}
+
+.moulight {
+  font-family: "KhmerOsMoul", sans-serif;
+  color: rgb(62, 93, 108);
+}
+.angkor {
+  font-family: "fontAnkor", sans-serif;
+}
+
+/* .customFont {
+  font-family: "Siemreap", sans-serif;
+}
+
+.customAnkor {
+  font-family: "Angkor", sans-serif;
+}
+.customKhmerMoul {
+  font-family: "Moul", sans-serif; 
+  font-weight: bold;
+  color: rgb(62, 93, 108);
+}
+
+/* src/assets/main.css */
+/* @font-face {
+  font-family: "fontOsSiemreap";
+  src: url("/fonts/KHMEROSSIEMREAP.TTF") format("truetype");
+}
+
+@font-face {
+  font-family: "KhmerOsMoul";
+  src: url("/fonts/KHMEROSMOUL.TTF") format("truetype");
+}
+@font-face {
+  font-family: "fontAnkor";
+  src: url("fonts/ANGKOR.TTF") format("truetype");
+} */
+
+.customFont {
+  font-family: "Siemreap", sans-serif;
+}
+
+.customKhmerMoul {
+  font-family: "Moul", sans-serif;
+  color: rgb(62, 93, 108);
+}
+
+.customAnkor {
+  font-family: "Angkor", sans-serif;
+}
+
+.customBattambang {
+  font-family: "Battambang", sans-serif;
+}
+
+.customNokora {
+  font-family: "Nokora", sans-serif;
+}

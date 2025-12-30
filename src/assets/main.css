@@ -1,0 +1,50 @@
+@import "./base.css";
+::-webkit-scrollbar {
+  width: 0.1rem;
+  height: 0.3rem;
+}
+/* ::-webkit-scrollbar-button {
+  background: #eb0000;
+} */
+::-webkit-scrollbar-track-piece {
+  background: #eee;
+}
+::-webkit-scrollbar-thumb {
+  background: #04600d;
+}
+
+.custom-swal-title {
+  font-family: "Siemreap", sans-serif !important;
+  font-size: 17px;
+  text-align: center;
+}
+.custom-swal-cancel-button {
+  color: #363b59 !important;
+}
+.colored-toast {
+  background-color: #363b59;
+}
+.custom-delete-swal-title {
+  font-family: "Siemreap", sans-serif !important;
+  font-size: 17px;
+  text-align: center;
+  color: #8388a4;
+}
+.custom-swal-confirm-button {
+  color: white !important;
+}
+.my-custom-table {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.customFont {
+  font-family: "fontOsSiemreap", sans-serif;
+}
+
+.customKhmerMoul {
+  font-family: "KhmerOsMoul", sans-serif;
+  color: rgb(62, 93, 108);
+}
+.customAnkor {
+  font-family: "fontAnkor", sans-serif;
+}

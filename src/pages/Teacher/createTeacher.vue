@@ -1,0 +1,520 @@
+<script setup>
+import Toast from "@/helper";
+import axios from "axios";
+import { onMounted, ref, watch } from "vue";
+import { computed } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { api } from "@/utils/axios";
+
+import { useSettingStore } from "@/store/setting";
+import { debounce } from "lodash";
+
+const settingStore = useSettingStore();
+
+const campus_id = ref(settingStore.campus_id);
+const route = useRoute();
+
+const router = useRouter();
+
+const editMode = ref(false);
+
+const isloading = ref(false);
+
+const form = ref({
+  id: "",
+  kh_name: "",
+  en_name: "",
+  gender: 1,
+  dob: "",
+  phone: "",
+  email: "",
+  facebookName: "",
+  national: "",
+  description: "",
+  photo_path: "",
+  new_photo_path: "",
+  profession: "",
+  village_address: "",
+  commune_address: "",
+  district_address: "",
+  province_address: "",
+  village_birth: "",
+  commune_birth: "",
+  district_birth: "",
+  province_birth: "",
+  campus_id: campus_id.value,
+});
+
+const resetForm = () => {
+  form.value = {
+    id: "",
+    kh_name: "",
+    en_name: "",
+    gender: 1,
+    dob: "",
+    phone: "",
+    email: "",
+    facebookName: "",
+    national: "",
+    description: "",
+    photo_path: "",
+    new_photo_path: "",
+    profession: "",
+    village_address: "",
+    commune_address: "",
+    district_address: "",
+    province_address: "",
+    village_birth: "",
+    commune_birth: "",
+    district_birth: "",
+    province_birth: "",
+    campus_id: campus_id.value,
+  };
+};
+
+watch(
+  () => settingStore.campus_id,
+  (newVal) => {
+    campus_id.value = newVal;
+    form.value.campus_id = campus_id.value;
+  }
+);
+
+const nation = ref([
+  {
+    name: "ខ្មែរ",
+  },
+  {
+    name: "ជនជាតិ",
+  },
+]);
+
+const gender = ref([
+  {
+    name: "ប្រុស",
+    id: 1,
+  },
+  {
+    name: "ស្រី",
+    id: 2,
+  },
+]);
+
+const rules = ref({
+  required: (value) => !!value || "Field is required",
+});
+
+// Filter rooms where status = 0
+
+const refInputEl = ref("");
+
+const handleFileUpload = (e) => {
+  let file = e.target.files[0];
+  if (form.value.id) {
+    form.value.new_photo_path = file;
+  } else {
+    form.value.photo_path = file;
+  }
+};
+
+const getPhoto = () => {
+  const isBlobOrFile = (value) =>
+    value instanceof Blob || value instanceof File;
+  if (form.value.id) {
+    if (form.value.new_photo_path && form.value.new_photo_path !== "") {
+      return isBlobOrFile(form.value.new_photo_path)
+        ? URL.createObjectURL(form.value.new_photo_path)
+        : "";
+    } else {
+      return form.value.photo_path
+        ? "https://iconic.disreportcard.com/storage/" + form.value.photo_path
+        : "";
+    }
+  } else {
+    return isBlobOrFile(form.value.photo_path)
+      ? URL.createObjectURL(form.value.photo_path)
+      : "";
+  }
+};
+
+const addTeacher = async () => {
+  isloading.value = true;
+  console.log("teacher", form.value);
+  try {
+    await api
+      .post("/add_teacher", form.value, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) => {
+        Toast.fire({
+          title: res.data.message,
+          icon: "success",
+        });
+      });
+    resetForm();
+    router.push("teacher");
+  } catch (error) {
+    Toast.fire({
+      title: error.response.data.message,
+      icon: "error",
+    });
+  } finally {
+    isloading.value = false;
+  }
+};
+
+const updateTeacher = async () => {
+  isloading.value = true;
+  try {
+    await api
+      .post("/updateTeacher", form.value, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) => {
+        Toast.fire({
+          title: res.data.message,
+          icon: "success",
+        });
+      });
+    router.push({
+      name: "TeacherList",
+    });
+  } catch (error) {
+    console.log(error);
+  } finally {
+    isloading.value = false;
+  }
+};
+
+const getOneTeacher = async () => {
+  try {
+    await api.post(`/getOneTeacher/${route.params.id}`).then((res) => {
+      // Object.assign(form.value, res.data);
+      form.value = res.data;
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const submit = () => {
+  if (editMode.value) {
+    updateTeacher();
+  } else {
+    addTeacher();
+  }
+};
+
+onMounted(() => {
+  if (route.params.id) {
+    editMode.value = true;
+    console.log(editMode.value);
+    getOneTeacher();
+  }
+});
+</script>
+<template>
+  <div>
+    <v-card class="mt-5 pa-4 border border-2" elevation="0">
+      <v-card-title class="customKhmerMoul text-green-darken-4"
+        ><h3>បង្កើតគ្រូបង្រៀន</h3></v-card-title
+      >
+
+      <v-card-text class="d-flex mt-3">
+        <!-- 👉 Avatar -->
+        <V-avatar
+          rounded="lg"
+          size="100"
+          class="me-6 rounded-lg border-sm"
+          :image="getPhoto()"
+        />
+
+        <!-- 👉 Upload Photo -->
+        <form class="d-flex flex-column justify-center gap-5 customFont">
+          <div class="d-flex flex-wrap">
+            <VBtn
+              color="orange mr-2"
+              @click="refInputEl?.click()"
+              variant="tonal"
+            >
+              <VIcon icon="mdi-upload" class="d-sm-none" />
+              <span class="d-none d-sm-block">បញ្ចូលរូបភាព</span>
+            </VBtn>
+
+            <input
+              ref="refInputEl"
+              type="file"
+              name="file"
+              hidden
+              @input="handleFileUpload"
+            />
+
+            <!-- <VBtn
+              type="reset"
+              color="error"
+              variant="tonal"
+              @click="resetAvatar"
+            >
+              <span class="d-none d-sm-block">សម្អាត</span>
+              <VIcon icon="mdi-delete-alert" class="d-sm-none" />
+            </VBtn> -->
+          </div>
+
+          <p class="text-body-1 mb-0 mt-2">
+            Allowed JPG, GIF or PNG. Max size of 800K
+          </p>
+        </form>
+      </v-card-text>
+
+      <v-divider></v-divider>
+
+      <!-- <v-card-title class="text-primary">Personal Information </v-card-title> -->
+      <v-card-text>
+        <!-- 👉 Form -->
+        <v-form class="customFont">
+          <v-row>
+            <!-- 👉 FullName Khmer -->
+            <v-col md="3" cols="12" :height="50" sm="4">
+              <VTextField
+                placeholder="ទាង​ តេលា"
+                label="ឈ្មោះ(ជាភាសាខ្មែរ) *"
+                variant="outlined"
+                :rules="[rules.required]"
+                density="compact"
+                v-model="form.kh_name"
+              />
+            </v-col>
+
+            <!-- 👉 FullName English -->
+            <v-col md="3" cols="12" sm="4">
+              <VTextField
+                placeholder="TEANG Tela"
+                label="ឈ្មោះ(ជាភាសាអក្សរឡាតាំង) *"
+                variant="outlined"
+                :rules="[rules.required]"
+                density="compact"
+                v-model="form.en_name"
+              />
+            </v-col>
+
+            <!-- 👉 Gender -->
+            <v-col md="2" cols="12" sm="2">
+              <v-select
+                placeholder="ប្រុស"
+                label="ភេទ *"
+                variant="outlined"
+                :items="gender"
+                item-title="name"
+                item-value="id"
+                :rules="[rules.required]"
+                density="compact"
+                v-model="form.gender"
+              />
+            </v-col>
+
+            <!-- 👉 National -->
+            <v-col md="2" cols="12" sm="2">
+              <VSelect
+                placeholder="ខ្មែរ"
+                :items="nation"
+                item-title="name"
+                item-value="name"
+                label="សញ្ជាតិ *"
+                variant="outlined"
+                :rules="[rules.required]"
+                density="compact"
+                v-model="form.national"
+              />
+            </v-col>
+
+            <!-- 👉 DataOfBirth -->
+            <v-col md="2" cols="12" sm="3">
+              <VTextField
+                label="ថ្ងៃខែឆ្នាំកំណើត *"
+                variant="outlined"
+                type="date"
+                :rules="[rules.required]"
+                density="compact"
+                v-model="form.dob"
+              />
+            </v-col>
+
+            <!-- 👉 village of Birth -->
+            <v-col md="2" cols="12" sm="3">
+              <VTextField
+                placeholder="កម្មករ"
+                label="ភូមិកំណើត"
+                variant="outlined"
+                :rules="[rules.required]"
+                density="compact"
+                v-model="form.village_birth"
+              />
+            </v-col>
+            <!-- 👉 commune of Birth -->
+            <v-col md="2" cols="12" sm="3">
+              <VTextField
+                placeholder="កម្មករ"
+                label="ឃុំ/សង្កាត់កំណើត"
+                variant="outlined"
+                :rules="[rules.required]"
+                density="compact"
+                v-model="form.commune_birth"
+              />
+            </v-col>
+            <!-- 👉 district of Birth -->
+            <v-col md="2" cols="12" sm="3">
+              <VTextField
+                placeholder="កម្មករ"
+                label="ស្រុកកំណើត"
+                variant="outlined"
+                :rules="[rules.required]"
+                density="compact"
+                v-model="form.district_birth"
+              />
+            </v-col>
+            <!-- 👉 province of Birth -->
+            <v-col md="2" cols="12" sm="4">
+              <VTextField
+                placeholder="កម្មករ"
+                label="ខេត្តកំណើត"
+                variant="outlined"
+                :rules="[rules.required]"
+                density="compact"
+                v-model="form.province_birth"
+              />
+            </v-col>
+
+            <!-- 👉 Email -->
+            <v-col md="2" cols="12" sm="4">
+              <VTextField
+                placeholder="telateang@gmail.com"
+                label="អុីម៉ែល"
+                variant="outlined"
+                :rules="[rules.required]"
+                density="compact"
+                v-model="form.email"
+              />
+            </v-col>
+
+            <!-- 👉 PhoneNumber -->
+            <v-col md="2" cols="12" sm="4">
+              <VTextField
+                placeholder="096 2211 209"
+                label="លេខទូរស័ព្ទ *"
+                variant="outlined"
+                :rules="[rules.required]"
+                density="compact"
+                v-model="form.phone"
+              />
+            </v-col>
+
+            <!-- 👉 Address -->
+
+            <!-- 👉village Address -->
+            <v-col md="2" cols="12" sm="4">
+              <VTextField
+                placeholder="កម្មករ"
+                label="ភូមិបច្ចុប្បន្ន"
+                variant="outlined"
+                :rules="[rules.required]"
+                density="compact"
+                v-model="form.village_address"
+              />
+            </v-col>
+            <!-- 👉comune Address -->
+            <v-col md="2" cols="12" sm="4">
+              <VTextField
+                placeholder="កម្មករ"
+                label="ឃុំ/សង្កាត់បច្ចុប្បន្ន"
+                variant="outlined"
+                :rules="[rules.required]"
+                density="compact"
+                v-model="form.commune_address"
+              />
+            </v-col>
+
+            <!-- 👉district Address -->
+            <v-col md="2" cols="12" sm="4">
+              <VTextField
+                placeholder="កម្មករ"
+                label="ស្រុកបច្ចុប្បន្ន"
+                variant="outlined"
+                :rules="[rules.required]"
+                density="compact"
+                v-model="form.district_address"
+              />
+            </v-col>
+            <!-- 👉province Address -->
+            <v-col md="2" cols="12" sm="4">
+              <VTextField
+                placeholder="កម្មករ"
+                label="ខេត្តបច្ចុប្បន្ន"
+                variant="outlined"
+                :rules="[rules.required]"
+                density="compact"
+                v-model="form.province_address"
+              />
+            </v-col>
+
+            <!-- 👉 Facebook -->
+            <v-col md="2" cols="12" sm="4">
+              <VTextField
+                placeholder="Eno"
+                label="Facebook"
+                variant="outlined"
+                :rules="[rules.required]"
+                density="compact"
+                v-model="form.facebookName"
+              />
+            </v-col>
+
+            <!-- 👉 Profession -->
+            <v-col md="2" cols="12" sm="4">
+              <VTextField
+                placeholder="ខ្មែរ, រូប, គណិត"
+                label="ជំនាញរបស់គ្រូ *"
+                variant="outlined"
+                :rules="[rules.required]"
+                density="compact"
+                v-model="form.profession"
+              />
+            </v-col>
+
+            <!-- 👉 Description -->
+            <v-col cols="12" md="12">
+              <v-textarea
+                clearable
+                label="កត់សម្គាល់"
+                row-height="25"
+                rows="3"
+                variant="outlined"
+                auto-grow
+                shaped
+                v-model="form.description"
+              ></v-textarea>
+            </v-col>
+
+            <!-- 👉 Form Actions -->
+            <VCol cols="12" class="d-flex ga-4 justify-end">
+              <VBtn variant="tonal" color="red" type="reset" @click="resetForm">
+                សម្អាត
+              </VBtn>
+              <VBtn
+                :loading="isloading"
+                :disabled="isloading"
+                @click="submit"
+                color="green"
+                variant="tonal"
+                >រក្សាទុក</VBtn
+              >
+            </VCol>
+          </v-row>
+        </v-form>
+      </v-card-text>
+    </v-card>
+  </div>
+</template>
