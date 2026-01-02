@@ -8,6 +8,7 @@ import { Printd } from "printd";
 import Border from "@/assets/img/border3.jpg";
 import ResultPrimaryVue from "../components/resultPrimary.vue";
 import ReportPrimaryWithImage from "../components/reportPrimaryWithImage.vue";
+import ReportTopOchar from "../components/reportTopOchar.vue";
 
 import { useSettingStore } from "@/store/setting";
 import { debounce } from "lodash";
@@ -15,6 +16,8 @@ import { debounce } from "lodash";
 const settingStore = useSettingStore();
 
 const campus_id = ref(settingStore.campus_id);
+
+// console.log("campus_id", campus_id.value);
 
 const currentTab = ref("list");
 
@@ -1269,6 +1272,7 @@ onMounted(async () => {
                           class="customKhmerMoul moul text-green-darken-4 mt-2"
                         >
                           សាលាចំណេះទូទៅអន្តរជាតិ ឌូវី
+                          <span v-if="campus_id == 2">សាខាអូរចារ </span>
                         </p>
                       </div>
                     </div>
@@ -1882,7 +1886,21 @@ onMounted(async () => {
                     class="primary"
                     style="position: relative"
                   >
+                    <ReportTopOchar
+                      id="printImg"
+                      v-if="campus_id == 2"
+                      ref="printImg"
+                      :khmerDate="khmerDate"
+                      :date="date"
+                      :yearMessage="convertYear(yearMessage)"
+                      :topFive="topFive"
+                      :monthMessage="monthMessage"
+                      :typeMessage="typeMessage"
+                      :transformedClass="transformedClass"
+                    >
+                    </ReportTopOchar>
                     <ReportPrimaryWithImage
+                      v-else
                       id="printImg"
                       ref="printImg"
                       :khmerDate="khmerDate"
@@ -1947,7 +1965,7 @@ onMounted(async () => {
                         <p
                           class="customKhmerMoul moul text-green-darken-4 mt-2"
                         >
-                          សាលាចំណេះទូទៅអន្តរជាតិ ឌូវី
+                          សាលាចំណេះទូទៅអន្តរជាតិ ឌូវី <span v-if="campus_id == 2">សាខាអូរចារ</span>
                         </p>
                       </div>
                     </div>

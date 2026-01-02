@@ -6,6 +6,7 @@ import dis from "@/assets/img/DIS.png";
 import { Printd } from "printd";
 import Border from "@/assets/img/border1.jpg";
 import ReportPrimaryWithImage from "../components/reportPrimaryWithImage.vue";
+import ReportTopOchar from "../components/reportTopOchar.vue";
 
 import ResultPrimaryVue from "../components/resultPrimary.vue";
 
@@ -955,6 +956,7 @@ onMounted(() => {
                           class="customKhmerMoul moul text-green-darken-4 mt-2"
                         >
                           សាលាចំណេះទូទៅអន្តរជាតិ ឌូវី
+                          <span v-if="campus_id == 2">សាខាអូរចារ</span>
                         </p>
                       </div>
                     </div>
@@ -1531,7 +1533,21 @@ onMounted(() => {
                     class="primary"
                     style="position: relative"
                   >
+                    <ReportTopOchar
+                      id="printImg"
+                      v-if="campus_id == 2"
+                      ref="printImg"
+                      :khmerDate="khmerDate"
+                      :date="date"
+                      :yearMessage="convertYear(yearMessage)"
+                      :topFive="topFive"
+                      :monthMessage="monthMessage"
+                      :typeMessage="typeMessage"
+                      :transformedClass="transformedClass"
+                    >
+                    </ReportTopOchar>
                     <ReportPrimaryWithImage
+                      v-else
                       id="printImg"
                       ref="printImg"
                       :khmerDate="khmerDate"
@@ -1594,6 +1610,7 @@ onMounted(() => {
                           class="customKhmerMoul moul text-green-darken-4 mt-2"
                         >
                           សាលាចំណេះទូទៅអន្តរជាតិ ឌូវី
+                          <span v-if="campus_id == 2">សាខាអូរចារ</span>
                         </p>
                       </div>
                     </div>
