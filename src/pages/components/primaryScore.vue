@@ -122,13 +122,6 @@ const handlePaste = (event, rowIndex, startField) => {
   <v-table fixed-header height="460" class="border customFont">
     <thead class="my-custom-table">
       <tr>
-        <!-- <th
-          style="height: 10px; background-color: red"
-          class="position-fixed text-left py-2 px-8 border"
-        >
-          ឈ្មោះសិស្ស
-        </th> -->
-
         <th
           class="sticky-header text-left py-2 px-8 border"
           style="left: 0; z-index: 50; background: white; height: 0px"
@@ -218,10 +211,7 @@ const handlePaste = (event, rowIndex, startField) => {
 
     <tbody class="my-custom-table">
       <tr v-for="(item, rowIndex) in students_scores" :key="item.id">
-        <!-- <td class="border">
-          {{ item.kh_name }}
-        </td> -->
-
+  
         <td class="border sticky-col">
           {{ item.kh_name }}
         </td>
